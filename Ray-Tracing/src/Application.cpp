@@ -1,23 +1,20 @@
 #include <iostream>
 #include <fstream>
-#include "Vec3.h"
+#include "rtweekend.h"
+#include "HittableList.h"
 #include "Color.h"
-#include "Ray.h"
 #include "Sphere.h"
 
 
 
-Color ray_color(const Ray& ray) {
-	Sphere sphere( Point3(0, 0, -1), 0.5 );
+Color ray_color(const Ray& ray, const Hittable &world) {
 	HitRecord record;
-	if (sphere.hit(ray, -1, 100, record)) {
+	if (world.hit(ray, Interval(0,infinity), record)) {
 		return 0.5 * (Color(record.m_Normal.x(), record.m_Normal.y(), record.m_Normal.z()) + 1);
 	}
 	
 	Vec3 unit_direction = unit_vector(ray.direction());
-	// Normalize the vector is form [-1, 1]
-	auto a = 0.5 * (unit_direction.y() + 1.0); // a is [0, 1]
-	// linear blinding: (1-a)*StartValue + (a)*EndValue
+	auto a = 0.5 * (unit_direction.y() + 1.0);
 	return (1.0-a)*Color(1.0,1.0,1.0) + a*Color(0.5, 0.7, 1.0);
 }
 
@@ -32,9 +29,14 @@ int main() {
 
 	// Image 
 	auto aspect_ratio = 16.0 / 9.0;
-	int image_width = 400;
+	int image_width = 200;
 	int image_height = static_cast<int>( image_width / aspect_ratio ) ;
 	image_height = (image_height > 1) ? image_height : 1;	
+
+	// World
+	HittableList world;
+	world.add(make_shared<Sphere>(Point3(0.0, 0.0, -1), 0.5));
+	world.add(make_shared<Sphere>(Point3(0.0, -100.5, -1), 100));
 
 	// Camera
 	auto focal_length = 1.0;
@@ -63,7 +65,7 @@ int main() {
 			auto pixel_center = pixel00_location + (i * pixel_delta_u) + (j * pixel_delta_v);
 			auto ray_direction = pixel_center - camer_center;
 			Ray ray(camer_center, ray_direction);
-			Color pixel_color = ray_color(ray);
+			Color pixel_color = ray_color(ray, world);
 			write_color(outputFile, pixel_color);
 		}
 	}

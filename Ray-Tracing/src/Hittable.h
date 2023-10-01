@@ -1,16 +1,23 @@
 #pragma once
-#include "Ray.h"
+#include "rtweekend.h"
+
 struct HitRecord
 {
 	Point3 m_Point;
 	Vec3 m_Normal;
 	double m_T;
+	bool m_FrontFace;
+
+	void setFaceNormal(const Ray& ray, const Vec3& outward_normal) {
+		m_FrontFace = dot(ray.direction(), outward_normal) < 0;
+		m_Normal = m_FrontFace ? outward_normal : -outward_normal;
+	}
 };
 
 class Hittable
 {
 public:
 	virtual ~Hittable() = default;
-	virtual bool hit(const Ray& ray, double ray_t_min, double ray_t_max, HitRecord& record) const = 0;
+	virtual bool hit(const Ray& ray, Interval ray_t, HitRecord& record) const = 0;
 
 };
