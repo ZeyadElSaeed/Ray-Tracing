@@ -38,6 +38,10 @@ inline Vec3 operator+(const Vec3& u, const Vec3& v) {
 	return Vec3(u.x() + v.x(), u.y() + v.y(), u.z() + v.z());
 }
 
+inline Vec3 operator+(const Vec3& v , const double value) {
+	return Vec3(value + v.x(), value + v.y(), value + v.z());
+}
+
 inline Vec3 operator-(const Vec3& u, const Vec3& v) {
 	return Vec3(u.x() - v.x(), u.y() - v.y(), u.z() - v.z());
 }
