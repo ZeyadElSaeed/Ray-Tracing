@@ -1,12 +1,15 @@
 #pragma once
 #include "rtweekend.h"
 
+class Material;
+
 struct HitRecord
 {
 	Point3 m_Point;
 	Vec3 m_Normal;
 	double m_T;
 	bool m_FrontFace;
+	shared_ptr<Material>m_Material;
 
 	void setFaceNormal(const Ray& ray, const Vec3& outward_normal) {
 		m_FrontFace = dot(ray.direction(), outward_normal) < 0;

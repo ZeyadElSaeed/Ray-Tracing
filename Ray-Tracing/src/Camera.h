@@ -2,6 +2,7 @@
 #include "rtweekend.h"
 #include "Hittable.h"
 #include "Color.h"
+#include "Material.h"
 #include <iostream>
 #include <fstream>
 
@@ -59,17 +60,19 @@ private:
 	}
 
 
-	Color ray_color(const Ray& ray, const Hittable& world, int max_rays_bounces)
+	Color ray_color(Ray& ray, const Hittable& world, int max_rays_bounces)
 	{
 		if (max_rays_bounces < 1)
 			return Color(0, 0, 0);
 
 		HitRecord record;
 		if (world.hit(ray, Interval(0.001, infinity), record)) {
-			// Keep reflect lights untill they don't hit surface (rest of function)
-			Vec3 direction = record.m_Normal + random_unit_vector();
-			Ray r(record.m_Point, direction);
-			return 0.5 * ray_color( r, world, max_rays_bounces-1) ;
+			Ray scatteredRay;
+			Color attenuation;
+			//scatter(ray, record, attenuation, scattered)
+			if ( record.m_Material->scatter(ray, record, attenuation, scatteredRay) )
+				return attenuation * ray_color(scatteredRay, world, max_rays_bounces - 1);
+			return Color(0, 0, 0);
 		}
 
 		Vec3 unit_direction = unit_vector(ray.direction());

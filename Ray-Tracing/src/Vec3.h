@@ -7,28 +7,55 @@ private:
 	double e[3];
 
 public:
-
-	Vec3();
-	Vec3(double e0, double e1, double e2);
+	Vec3(double e0 = 0.0, double e1 = 0.0, double e2 = 0.0)
+		: e{ e0, e1, e2 }
+	{}
 	virtual ~Vec3() {}
 
 	inline double x() const { return e[0]; }
 	inline double y() const { return e[1]; }
 	inline double z() const { return e[2]; }
 
-	Vec3 operator-() const;
+	Vec3 operator-()const
+	{
+		return Vec3(-e[0], -e[1], -e[2]);
+	}
+
 	inline double operator[](int i) const { return e[i]; }
 	inline double& operator[](int i) { return e[i]; }
 
-	Vec3& operator+=(const Vec3& v);
-	Vec3& operator*=(const double t);
-	Vec3& operator/=(const double t);
+	Vec3& operator+=(const Vec3& v) {
+		e[0] += v[0];
+		e[1] += v[1];
+		e[2] += v[2];
+		return *this;
+	}
+	Vec3& operator*=(const double t) {
+		e[0] *= t;
+		e[1] *= t;
+		e[2] *= t;
+		return *this;
+	}
+	Vec3& operator/=(const double t) {
+		return (*this *= (1 / t));
+	}
 
-	static Vec3 random();
-	static Vec3 random(double min, double max);
+	static Vec3 random() {
+		return Vec3(random_double(), random_double(), random_double());
+	}
+	static Vec3 random(double min, double max) {
+		return Vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+	}
 	inline double length_squared() const { return (e[0] * e[0] + e[1] * e[1] + e[2] * e[2]); }
-	double length() const;
 
+	double length() const {
+		return sqrt(length_squared());
+	}
+
+	bool nearZero() {
+		auto s = 1e-8;
+		return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+	}
 };
 
 using Point3 = Vec3;
@@ -75,7 +102,7 @@ inline Vec3 cross(const Vec3& u, const Vec3& v) {
 				u.x() * v.y() - u.y() * v.x() );
 }
 
-inline Vec3 unit_vector(Vec3 v) {
+inline Vec3 unit_vector(const Vec3 v)  {
 	return v / v.length();
 }
 
@@ -97,4 +124,8 @@ inline Vec3 random_on_hemisphere(const Vec3& normal) {
 		return on_unit_sphere;
 	else
 		return - on_unit_sphere;
+}
+
+inline Vec3 reflect(const Vec3& ray, const Vec3& normal) {
+	return ray - (2 * dot(ray, normal)*normal);
 }
