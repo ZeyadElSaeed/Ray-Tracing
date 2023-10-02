@@ -25,6 +25,12 @@ public:
 		return m_Min < x && x < m_Max;
 	}
 
+	double clamp(double x) const {
+		if (x < m_Min) return m_Min;
+		if (x > m_Max) return m_Max;
+		return x;
+	}
+
 	inline double getMin() const { return m_Min; }
 	inline double getMax() const { return m_Max; }
 

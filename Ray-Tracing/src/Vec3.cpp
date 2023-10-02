@@ -1,6 +1,4 @@
-#include "Vec3.h"
-#include <cmath>
-
+#include "rtweekend.h"
 
 Vec3::Vec3()
 	:e{0.0, 0.0, 0.0}
@@ -31,6 +29,13 @@ Vec3& Vec3::operator*=(const double t){
 }
 Vec3& Vec3::operator/=(const double t){
 	return (*this *= (1/t));
+}
+
+Vec3 Vec3::random() {
+	return Vec3(random_double(), random_double(), random_double());
+}
+Vec3 Vec3::random(double min, double max) {
+	return Vec3(random_double(min, max), random_double(min, max), random_double(min, max));
 }
 
 double Vec3::length() const {
